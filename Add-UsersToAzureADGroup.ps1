@@ -1,3 +1,4 @@
+# Courtesy of SeeSmitty - https://github.com/SeeSmitty/Powershell/blob/main/Add-UsersToAzureADGroup.ps1
 
 #connect to azure ad
 Connect-AzureAD
@@ -5,7 +6,7 @@ Connect-AzureAD
 #import a CSv with the list of users to be added to the group
 $list = Import-Csv "C:\Users\SeeSmitty\Downloads\UserList.csv"
 #Name of the group being added
-$group = "All Employees"
+$group = "Group Name"
 
 
 #get the object ID from Azure
