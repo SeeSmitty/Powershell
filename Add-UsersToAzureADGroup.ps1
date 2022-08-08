@@ -16,12 +16,15 @@ $GroupObjectID = Get-AzureADGroup -SearchString $group | Select -Property Object
 #roll through the list to look up each user and add to the group. 
 foreach ($y in $list){
     $y2 = Get-AzureADUser -ObjectId $y.userPrincipalName | Select -Property ObjectID
-    try {
-        Add-AzureADGroupMember -ObjectId $GroupObjectID.ObjectID -RefObjectId $y2.ObjectId -InformationAction SilentlyContinue
+    $members = Get-AzureADGroupMember -ObjectId $GroupObjectID.ObjectID
+   
+    if ($y2.ObjectID -in $members.ObjectID) {
+        Write-Host $y.userPrincipalName'is already in the Group' -ForegroundColor Blue
+    }else{
+        Add-AzureADGroupMember -ObjectId $GroupObjectID2.ObjectID -RefObjectId $y2.ObjectId -InformationAction SilentlyContinue
+        Write-Host $y.userPrincipalName'has been added to the Group' -ForegroundColor Green
     }
-    catch {
-        Write-Host $y.userPrincipalName "is already a member"
-    }
+   
 }
 
 #Disconnect Azure AD
