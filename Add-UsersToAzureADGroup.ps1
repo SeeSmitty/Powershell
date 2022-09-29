@@ -21,7 +21,7 @@ foreach ($y in $list){
     if ($y2.ObjectID -in $members.ObjectID) {
         Write-Host $y.userPrincipalName'is already in the Group' -ForegroundColor Blue
     }else{
-        Add-AzureADGroupMember -ObjectId $GroupObjectID2.ObjectID -RefObjectId $y2.ObjectId -InformationAction SilentlyContinue
+        Add-AzureADGroupMember -ObjectId $GroupObjectID.ObjectID -RefObjectId $y2.ObjectId -InformationAction SilentlyContinue
         Write-Host $y.userPrincipalName'has been added to the Group' -ForegroundColor Green
     }
    
