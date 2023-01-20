@@ -38,7 +38,7 @@ Connect-ExchangeOnline
 $path = "C:\temp\DLs"
 
 #gather our information about our distribution lists
-$onPremDLs = Get-DistributionGroup | Where-Object { ($_.IsDirSynced -EQ $true -and $_.GroupType -ne "Universal, Security")}
+$onPremDLs = Get-DistributionGroup | Where-Object { ($_.IsDirSynced -EQ $true -and $_.GroupType -ne "Universal, SecurityEnabled")}
 
 #Export a list of the names of all groups that will be effected
 $onPremDLs | Select-Object Name | Export-Csv "$path\AllDL-List.csv"
