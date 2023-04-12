@@ -74,9 +74,9 @@ function Set-GroupProperties {
     $managedBy = $Properties.ManagedBy
 
     #Checks to see whether the group has a managed by field and adds the account(s) running the script if it does not
-    if ([string]::IsNullOrEmpty($managedBy)) {
+    if ((($managedBy | Measure-Object).Count) -eq 0) {
         Write-Host "ManagedBy is Blank - Will Be Set to Account Running this Script" -ForegroundColor Yellow
-    }elseif ((($managedBy | Measure-Object).Count) -gt 1) {
+    }elseif ((($managedBy | Measure-Object).Count) -eq 1) {
         Set-DistributionGroup -Identity $Name -ManagedBy $managedBy -Confirm:$false -ErrorAction SilentlyContinue
         Write-Host "ManagedBy Configured with $managedBy as the owner" -ForegroundColor Green
     }else {
