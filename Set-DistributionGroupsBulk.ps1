@@ -17,8 +17,8 @@ Various outputs indicated success or an unchanged setting will display on the bo
 
 .NOTES
 The majority of information regarding this script can be found at the blog post. This provides best explanation of use and expectations
-Version: 2.0
-Date: 11/6/22
+Version: 2.1
+Update: 4/11/2023
 
 Version 1.0 can be found at the Part 1 link below. 
 
@@ -71,6 +71,20 @@ function Set-GroupProperties {
     $folder = "$path\$na"
     $Properties = Import-Clixml -Path "$folder\$na.xml"
     $Name = $Properties.Name
+    $managedBy = $Properties.ManagedBy
+
+    #Checks to see whether the group has a managed by field and adds the account(s) running the script if it does not
+    if ([string]::IsNullOrEmpty($managedBy)) {
+        Write-Host "ManagedBy is Blank - Will Be Set to Account Running this Script" -ForegroundColor Yellow
+    }elseif ((($managedBy | Measure-Object).Count) -gt 1) {
+        Set-DistributionGroup -Identity $Name -ManagedBy $managedBy -Confirm:$false -ErrorAction SilentlyContinue
+        Write-Host "ManagedBy Configured with $managedBy as the owner" -ForegroundColor Green
+    }else {
+        foreach ($mb in $managedBy) {
+            Set-DistributionGroup -Identity $Name -ManagedBy $mb -Confirm:$false -ErrorAction SilentlyContinue
+            Write-Host "ManagedBy Configured with $managedBy as the owner" -ForegroundColor Green
+        }        
+    }
 
     #Checks to see whether the group has restricted senders and adds them if it does
     if ([string]::IsNullOrEmpty($Properties.AcceptMessagesOnlyFrom)) {
