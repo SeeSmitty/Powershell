@@ -55,6 +55,7 @@ function New-GroupCreation {
     $MemberDepartRestriction = $Properties.MemberDepartRestriction
     $members = $mem.PrimarySmtpAddress
     $PrimarySmtpAddress = $Properties.PrimarySmtpAddress
+    $LegacyExchangeDN = $Properties.LegacyExchangeDN 
     $RequireSenderAuthenticationEnabled  = $Properties.RequireSenderAuthenticationEnabled 
     $GroupType = "Distribution"
 
@@ -245,12 +246,18 @@ function Set-GroupProperties {
 
     }
 
-    #email addresses - This will add all non-primary smtp addresses as ailases to this mailbox
+    #email addresses - This will add all non-primary smtp addresses as ailases to this mailbox including X500 addresses for Outlook autocomplete support
     foreach($sg in $Properties.EmailAddresses){
-        if ($sg.StartsWith('smtp:')) {
+        if ($sg.StartsWith('^(smtp|x500):.*')) {
             Set-DistributionGroup -Identity $Name -EmailAddresses @{Add=$sg} -ErrorAction SilentlyContinue
             Write-Host "Added $sg successfully" -ForegroundColor Green
         }
+    }
+    
+    #This will add the previous LegacyExchangeDN attribute as a X500 address for Outlook autocomplete support
+    if ([string]::IsNullOrEmpty($LegacyExchangeDN)) {
+        Set-DistributionGroup -Identity $Name -EmailAddresses @{Add=$LegacyExchangeDN} -ErrorAction SilentlyContinue
+        Write-Host "Added LegacyExchangeDN as X500 address successfully" -ForegroundColor Green
     }
 
     #This parameter specifies a value for the ExtensionCustomAttribute1 property on the recipient.
