@@ -248,7 +248,7 @@ function Set-GroupProperties {
 
     #email addresses - This will add all non-primary smtp addresses as ailases to this mailbox including X500 addresses for Outlook autocomplete support
     foreach($sg in $Properties.EmailAddresses){
-        if ($sg.StartsWith('^(smtp|x500):.*')) {
+        if ($sg -match '^(smtp:|x500:).*') {
             Set-DistributionGroup -Identity $Name -EmailAddresses @{Add=$sg} -ErrorAction SilentlyContinue
             Write-Host "Added $sg successfully" -ForegroundColor Green
         }
