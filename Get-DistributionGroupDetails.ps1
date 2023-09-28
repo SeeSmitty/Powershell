@@ -38,35 +38,37 @@ Connect-ExchangeOnline
 $path = "C:\temp\DLs"
 
 #gather our information about our distribution lists
-$onPremDLs = Get-DistributionGroup | Where-Object { ($_.IsDirSynced -EQ $true -and $_.GroupType -ne "Universal, SecurityEnabled")}
+$onPremDLs = Get-DistributionGroup | Where-Object { ($_.IsDirSynced -EQ $true -and $_.GroupType -ne "Universal, SecurityEnabled") }
 
 #Export a list of the names of all groups that will be effected
 $onPremDLs | Select-Object Name | Export-Csv "$path\AllDL-List.csv"
 
 #Loop to create the CSV backup files, each in their own directory as well as a list of members
-foreach($op in $onPremDLs){
+foreach ($op in $onPremDLs) {
     $foldername = $op.Name
     $folder = "$path\$foldername"
     $file = $op.Name
 
     if (test-path $folder) {
-    Write-host "Folder Exists"
-    }else {
+        Write-host "Folder Exists"
+    }
+    else {
         mkdir $folder
     }
 
 
     #Full backup of all settings related to the DL
-    Get-DistributionGroup $op | Export-Clixml -Path "$folder\$file.xml"
+    Get-DistributionGroup -Filter "DisplayName -eq '$op'" | Export-Clixml -Path "$folder\$file.xml"
 
     #Get all group members and save to a file - we only need PrimarySmtpAddress to add them back to the new group
-    Get-DistributionGroupMember $op | select-object PrimarySmtpAddress | Export-Csv "$folder\$file-members.csv"
+    Get-DistributionGroupMember -Identity $op.PrimarySmtpAddress | select-object PrimarySmtpAddress | Export-Csv "$folder\$file-members.csv"
 
     #Get-delegation permissions for the distribution list in question
     $delegates = Get-RecipientPermission -Identity $op -ErrorAction SilentlyContinue
     if ([string]::IsNullOrEmpty($delegates)) {
         Write-Host "No Delegates for group: $op"
-    }else{
+    }
+    else {
         $delegates | Export-Csv "$folder\$file-access.csv"
         Write-Host "Delegates Exist for group: $op"
     }
