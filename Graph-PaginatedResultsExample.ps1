@@ -1,11 +1,27 @@
+<#
+.SYNOPSIS
+The purpose of this script is to provide an example for pagination in MS Graph PowerShell SDK
 
+.DESCRIPTION
+The purpose of this script is to provide an example for pagination in MS Graph PowerShell SDK. This allows 
+for a template for building pagination into powershell scripts leverging MS Graph. 
+
+.LINK
+https://seesmitty.com/leverage-invoke-restmethod-for-more-powerful-scripting-part-2/
+
+.NOTES
+Author: Smitty
+Date: 10-06-2022
+Version: 1.0.1
+
+#>
 $Client = ""
 $secret = ""
 $tenant = ""
 
 
 #details for connecting via MS Graph
-$body =  @{
+$body = @{
     Grant_Type    = "client_credentials"
     Scope         = "https://graph.microsoft.com/.default"
     Client_Id     = $Client
@@ -23,7 +39,7 @@ function Get-GroupList {
     begin {
         $headers = @{
             Authorization = "$($connection.token_type) $($connection.access_token)"
-            ContentType  = "application/json"
+            ContentType   = "application/json"
         }
         $apiUrl = "https://graph.microsoft.com/v1.0/groups"
     }
@@ -44,7 +60,7 @@ $more = $groups.'@odata.nextLink'
 while ($null -ne $more) {
     $headers = @{
         Authorization = "$($connection.token_type) $($connection.access_token)"
-        ContentType  = "application/json"
+        ContentType   = "application/json"
     }
     $groups2 = Invoke-RestMethod $more -Headers $headers
     $more = $groups2.'@odata.nextLink'
