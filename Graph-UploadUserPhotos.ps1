@@ -1,12 +1,35 @@
+<#
+.SYNOPSIS
+This script uploads photos to Azure AD for user accounts, and sends an email for any failed uploads.
+
+.DESCRIPTION
+This script uploads photos to Azure AD for user accounts, and sends an email for any failed uploads. It is important to note
+that these photos should already match the appropriate size and aspect ratio prior to being uploaded to ensure they don't look 
+warped after being uploaded. 
+
+This script assumes you are using certificate based authentication, though it could be modified to use any other authentication
+as needed according to your preferences. 
+
+Also, This script works on the assumption that user photos in a directory are named with the username (or samAccountName) 
+of the person for whom the photo was taken.
+
+.LINK
+https://seesmitty.com/how-to-update-user-photos-in-azure-ad-with-powershell/
+
+.NOTES
+Author: Smitty
+Date: 8/22/2022
+Version: 1.1.0
+
+#>
+
 #Variables
 $thumb = {"thumbprint"}
 $client = {"clientID"}
 $tenant = {"tenantID"}
-$org = {"PrimaryDomain"}
 $Certificate = Get-ChildItem Cert:\CurrentUser\My\$thumb
 
 #connection Strings
-Connect-ExchangeOnline -CertificateThumbPrint $thumb -AppID $client -Organization $org
 Connect-Graph -TenantId $tenant -AppId $client -Certificate $Certificate
 
 #region Email Template
@@ -83,4 +106,3 @@ foreach($photo in $photoName){
 }
 
 Disconnect-Graph
-Disconnect-ExchangeOnline -Confirm:$false
