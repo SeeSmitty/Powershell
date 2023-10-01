@@ -1,14 +1,31 @@
-#Details on usage of this script located here: https://seesmitty.com/how-to-use-microsoft-graph-powershell-sdk/
+<#
+.SYNOPSIS
+Ths intent behind this script is to make it easier to bulk add users to Azure AD Groups via PowerShell
+
+.DESCRIPTION
+Ths intent behind this script is to make it easier to bulk add users to Azure AD Groups via PowerShell. This leverages the 
+Microsoft Graph PowerShell SDK to do this. 
+
+This script assumes certificate based authentication though, it can be changed relatively easily to an alternate approved 
+authentication method. 
+
+.LINK
+https://seesmitty.com/how-to-use-microsoft-graph-powershell-sdk/
+
+.NOTES
+Author: Smitty
+Date: 
+#>
 
 #Details to get you connected to Azure Tenant
 $client = '{cliendId}'
 $tenant = '{tenantID}'
-$Certificate = Get-ChildItem Cert:\CurrentUser\My\('thumbprint for self-signed cert'}
+$Certificate = Get-ChildItem Cert:\CurrentUser\My\'{thumbprint for self-signed cert}'
 Connect-Graph -TenantId $tenant -AppId $client -Certificate $Certificate
 
 
 #import a CSv with the list of users to be added to the group
-$users = Import-Csv "%pathToFile%\FileName.csv"
+$users = Import-Csv "FilePath\FileName.csv"
 #Name of the group being added
 $group = "Group Display Name Here"
 
@@ -19,7 +36,7 @@ $GroupObjectID = Get-MgGroup -Search "DisplayName:$group" -ConsistencyLevel even
 #Loop to confirm everyone in the list is added to the group
 ForEach ($u in $users) {
     $members = Get-MgGroupMember -GroupId $GroupObjectID.Id
-    $u2 = Get-MgUser -UserId $u.userPrincipalName | select Id
+    $u2 = Get-MgUser -UserId $u.userPrincipalName | Select-Object Id
 
     #Check if user is a member; add if they are not
     If ($u2.Id -in $members.id) {
