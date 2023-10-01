@@ -48,7 +48,7 @@ Set-Content -Path $scriptPath\$scriptName -Value $script
 #############################################################
 
 $TaskName = "Start Copy Process"
-Get-ScheduledTask | Where-Object {$_.TaskName -eq "$TaskName"} | Unregister-ScheduledTask -confirm:$false
+Get-ScheduledTask | Where-Object { $_.TaskName -eq "$TaskName" } | Unregister-ScheduledTask -confirm:$false
 $action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-WindowStyle hidden -File $scriptPath\$scriptName"
 $trigger = New-ScheduledTaskTrigger -AtLogon
 $principal = (Get-CimInstance -ClassName Win32_ComputerSystem).Username
