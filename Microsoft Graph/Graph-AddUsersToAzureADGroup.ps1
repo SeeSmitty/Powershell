@@ -14,7 +14,8 @@ https://seesmitty.com/how-to-use-microsoft-graph-powershell-sdk/
 
 .NOTES
 Author: Smitty
-Date: 
+Date: 8/13/2022
+Version: 1.1
 #>
 
 #Details to get you connected to Azure Tenant
@@ -31,7 +32,7 @@ $group = "Group Display Name Here"
 
 
 #Get the ObjectID for the group in question
-$GroupObjectID = Get-MgGroup -Search "DisplayName:$group" -ConsistencyLevel eventual | select-object Id,DisplayName
+$GroupObjectID = Get-MgGroup -Search "DisplayName:$group" -ConsistencyLevel eventual | select-object Id, DisplayName
 
 #Loop to confirm everyone in the list is added to the group
 ForEach ($u in $users) {
@@ -41,7 +42,8 @@ ForEach ($u in $users) {
     #Check if user is a member; add if they are not
     If ($u2.Id -in $members.id) {
         Write-Host $u.userPrincipalName"is already in the group" -ForegroundColor Blue
-    }Else{
+    }
+    Else {
         New-MgGroupMember -GroupId $GroupObjectID.Id -DirectoryObjectId $u2.Id
         Write-Host $u.userPrincipalName"has been added to the group" -ForegroundColor Green
 
