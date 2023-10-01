@@ -9,17 +9,20 @@ This PowerShell script connects to Exchange Online and Microsoft Graph using the
 The thumbprint of the certificate used for authentication.
 
 .PARAMETER client
-The client ID used for authentication.
+The client ID for the Azure App Registration used for authentication.
 
 .PARAMETER tenant
-The tenant ID used for authentication.
+The tenant ID of the organization used for authentication.
 
 .PARAMETER org
 The primary domain of the organization.
 
+.LINK
+https://seesmitty.com/how-to-update-user-photos-in-azure-ad-with-powershell/
+
 .NOTES
 Author: Smitty
-Date: 09/30/2023
+Date: 08/30/2022
 Version: 1.0
 #>
 
