@@ -26,18 +26,18 @@ function Reset-AdskCloudLicense($ar) {
 
 #set the location so we can run the file to get the list of products on the machine 
 Set-Location "${env:ProgramFiles(x86)}\Common Files\Autodesk Shared\AdskLicensing\Current\helper\"
-$list =  .\AdskLicensingInstHelper.exe list
+$list = .\AdskLicensingInstHelper.exe list
 
 
 #select the string to pull the keys out of the text that is generated
 $Key = $list | Select-String def_prod_key
-$key = foreach($l in $key){([String]$l).Trim('"def_prod_key": ')}
-$key = foreach($l in $key){([String]$l).Trim('",')}
+$key = foreach ($l in $key) { ([String]$l).Trim('"def_prod_key": ') }
+$key = foreach ($l in $key) { ([String]$l).Trim('",') }
 
 #select the string to pull the version out of the text that is generated
 $ver = $list | Select-String def_prod_ver
-$ver = foreach($l in $ver){([String]$l).Trim('"def_prod_ver": ')}
-$ver = foreach($l in $ver){([String]$l).Trim('",')}
+$ver = foreach ($l in $ver) { ([String]$l).Trim('"def_prod_ver": ') }
+$ver = foreach ($l in $ver) { ([String]$l).Trim('",') }
 
 #creates a datatable to make it easier to process and parse the data
 $Actiontable = New-Object System.Data.DataTable
@@ -48,7 +48,7 @@ $Actiontable.Columns.Add("def_prod_ver", "System.String")
 #it is incremented by one each time the loop is ran
 #confirmation that the keys & versions are still lined up can be found with this command: $list | Select-String def_prod_key,def_prod_ver
 $x = 0
-foreach($k in $key){
+foreach ($k in $key) {
     $arow = $Actiontable.NewRow()
     $arow.def_prod_key = $k
     $arow.def_prod_ver = $ver.split()[$x]
@@ -59,14 +59,14 @@ foreach($k in $key){
 #creates the final array of arguments we will use in the actual license type reset
 #Should be one of (case insensitive): USER, STANDALONE, NETWORK or empty "" to reset LGS
 $finalArray = @()
-foreach($a in $Actiontable){
+foreach ($a in $Actiontable) {
     $prodkey = $a.def_prod_key
     $prodVer = $a.def_prod_ver
     $finalArray += "change -pk $prodKey -pv $prodVer -lm USER"
 }
 
 #applys the actual reset
-foreach($final in $finalArray){
+foreach ($final in $finalArray) {
     Reset-AdskCloudLicense -ar $final
 }
 
