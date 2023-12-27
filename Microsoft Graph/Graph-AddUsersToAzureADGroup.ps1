@@ -19,10 +19,7 @@ Version: 1.1
 #>
 
 #Details to get you connected to Azure Tenant
-$client = '{cliendId}'
-$tenant = '{tenantID}'
-$Certificate = Get-ChildItem Cert:\CurrentUser\My\'{thumbprint for self-signed cert}'
-Connect-Graph -TenantId $tenant -AppId $client -Certificate $Certificate
+Connect-Graph -NoWelcome
 
 
 #import a CSv with the list of users to be added to the group
